@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace BankOCR.Tests
@@ -7,6 +8,33 @@ namespace BankOCR.Tests
     [TestFixture]
     public class OCRConversionTests
     {
+        [Test]
+        public void ThrowsIfAccountStringIsNull()
+        {
+            const string testValue = null;
+
+            var converter = new OCRConverter();
+            Assert.Throws<ArgumentNullException>(() => converter.Convert(testValue));
+        }
+
+        [Test]
+        public void ThrowsIfAccountStringIsTooShort()
+        {
+            const string testValue = "_";
+            
+            var converter = new OCRConverter();
+            Assert.Throws<ArgumentException>(() => converter.Convert(testValue));
+        }
+
+        [Test]
+        public void ThrowsIfAccountStringIsTooLong()
+        {
+            string testValue = Enumerable.Repeat("_", 117).ToString();
+
+            var converter = new OCRConverter();
+            Assert.Throws<ArgumentException>(() => converter.Convert(testValue));
+        }
+
         [Test]
         public void AllZeroesTest()
         {
@@ -35,110 +63,110 @@ namespace BankOCR.Tests
             Assert.That(result.ToValue(), Is.EqualTo(111111111));
         }
         [Test]
-        public void AllTwoesTest()
+        public void AllTwosTest()
         {
             string testValue =
-            " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
-            "| || || || || || || || || |" + Environment.NewLine +
-            "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
-            "                           ";
+                " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
+                " _| _| _| _| _| _| _| _| _|" + Environment.NewLine +
+                "|_ |_ |_ |_ |_ |_ |_ |_ |_ " + Environment.NewLine +
+                "                           " + Environment.NewLine;
 
             var converter = new OCRConverter();
             var result = converter.Convert(testValue);
-            Assert.That(result, Is.EqualTo(2222222222));
+            Assert.That(result.ToValue(), Is.EqualTo(222222222));
         }
         [Test]
         public void AllThreesTest()
         {
             string testValue =
-            " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
-            "| || || || || || || || || |" + Environment.NewLine +
-            "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
-            "                           ";
+                " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
+                " _| _| _| _| _| _| _| _| _|" + Environment.NewLine +
+                " _| _| _| _| _| _| _| _| _|" + Environment.NewLine +
+                "                           " + Environment.NewLine;
 
             var converter = new OCRConverter();
             var result = converter.Convert(testValue);
-            Assert.That(result, Is.EqualTo(333333333));
+            Assert.That(result.ToValue(), Is.EqualTo(333333333));
         }
         [Test]
         public void AllFoursTest()
         {
             string testValue =
-            " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
-            "| || || || || || || || || |" + Environment.NewLine +
-            "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
-            "                           ";
+                "                           " + Environment.NewLine +
+                "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
+                "  |  |  |  |  |  |  |  |  |" + Environment.NewLine +
+                "                           " + Environment.NewLine;
 
             var converter = new OCRConverter();
             var result = converter.Convert(testValue);
-            Assert.That(result, Is.EqualTo(444444444));
+            Assert.That(result.ToValue(), Is.EqualTo(444444444));
         }
         [Test]
         public void AllFivesTest()
         {
             string testValue =
-            " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
-            "| || || || || || || || || |" + Environment.NewLine +
-            "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
-            "                           ";
+                " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
+                "|_ |_ |_ |_ |_ |_ |_ |_ |_ " + Environment.NewLine +
+                " _| _| _| _| _| _| _| _| _|" + Environment.NewLine +
+                "                           " + Environment.NewLine;
 
             var converter = new OCRConverter();
             var result = converter.Convert(testValue);
-            Assert.That(result, Is.EqualTo(555555555));
+            Assert.That(result.ToValue(), Is.EqualTo(555555555));
         }
         [Test]
         public void AllSixesTest()
         {
             string testValue =
-            " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
-            "| || || || || || || || || |" + Environment.NewLine +
-            "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
-            "                           ";
+                " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
+                "|_ |_ |_ |_ |_ |_ |_ |_ |_ " + Environment.NewLine +
+                "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
+                "                           " + Environment.NewLine;
 
             var converter = new OCRConverter();
             var result = converter.Convert(testValue);
-            Assert.That(result, Is.EqualTo(666666666));
+            Assert.That(result.ToValue(), Is.EqualTo(666666666));
         }
         [Test]
         public void AllSevensTest()
         {
             string testValue =
-            " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
-            "| || || || || || || || || |" + Environment.NewLine +
-            "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
-            "                           ";
+                " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
+                "  |  |  |  |  |  |  |  |  |" + Environment.NewLine +
+                "  |  |  |  |  |  |  |  |  |" + Environment.NewLine +
+                "                           " + Environment.NewLine;
 
             var converter = new OCRConverter();
             var result = converter.Convert(testValue);
-            Assert.That(result, Is.EqualTo(777777777));
+            Assert.That(result.ToValue(), Is.EqualTo(777777777));
         }
 
         [Test]
         public void AllEightsTest()
         {
             string testValue =
-            " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
-            "| || || || || || || || || |" + Environment.NewLine +
-            "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
-            "                           ";
+                " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
+                "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
+                "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
+                "                           " + Environment.NewLine;
 
             var converter = new OCRConverter();
             var result = converter.Convert(testValue);
-            Assert.That(result, Is.EqualTo(888888888));
+            Assert.That(result.ToValue(), Is.EqualTo(888888888));
         }
 
         [Test]
         public void AllNinesTest()
         {
             string testValue =
-            " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
-            "| || || || || || || || || |" + Environment.NewLine +
-            "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
-            "                           ";
+                " _  _  _  _  _  _  _  _  _ " + Environment.NewLine +
+                "|_||_||_||_||_||_||_||_||_|" + Environment.NewLine +
+                " _| _| _| _| _| _| _| _| _|" + Environment.NewLine +
+                "                           " + Environment.NewLine;
 
             var converter = new OCRConverter();
             var result = converter.Convert(testValue);
-            Assert.That(result, Is.EqualTo(999999999));
+            Assert.That(result.ToValue(), Is.EqualTo(999999999));
         }
     }
 
@@ -160,45 +188,13 @@ namespace BankOCR.Tests
 se case 1
 =&gt; 000000000
 =&gt; 111111111
- _  _  _  _  _  _  _  _  _ 
- _| _| _| _| _| _| _| _| _|
-|_ |_ |_ |_ |_ |_ |_ |_ |_ 
-                           
 =&gt; 222222222
- _  _  _  _  _  _  _  _  _ 
- _| _| _| _| _| _| _| _| _|
- _| _| _| _| _| _| _| _| _|
-                           
 =&gt; 333333333
-                           
-|_||_||_||_||_||_||_||_||_|
-  |  |  |  |  |  |  |  |  |
-                           
 =&gt; 444444444
- _  _  _  _  _  _  _  _  _ 
-|_ |_ |_ |_ |_ |_ |_ |_ |_ 
- _| _| _| _| _| _| _| _| _|
-                           
 =&gt; 555555555
- _  _  _  _  _  _  _  _  _ 
-|_ |_ |_ |_ |_ |_ |_ |_ |_ 
-|_||_||_||_||_||_||_||_||_|
-                           
 =&gt; 666666666
- _  _  _  _  _  _  _  _  _ 
-  |  |  |  |  |  |  |  |  |
-  |  |  |  |  |  |  |  |  |
-                           
 =&gt; 777777777
- _  _  _  _  _  _  _  _  _ 
-|_||_||_||_||_||_||_||_||_|
-|_||_||_||_||_||_||_||_||_|
-                           
 =&gt; 888888888
- _  _  _  _  _  _  _  _  _ 
-|_||_||_||_||_||_||_||_||_|
- _| _| _| _| _| _| _| _| _|
-                           
 =&gt; 999999999
     _  _     _  _  _  _  _
   | _| _||_||_ |_   ||_||_|

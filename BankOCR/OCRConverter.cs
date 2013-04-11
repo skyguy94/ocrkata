@@ -30,7 +30,8 @@ namespace BankOCR
             const int characterWidth = 3;
 
             var lineLength = blockLength * blockHeight + blockHeight * Environment.NewLine.Length;
-            if (testValue.Length != lineLength) throw new ArgumentException("The supplied string is improperly formatted.");
+            if (testValue == null) throw new ArgumentNullException();
+            if (testValue.Length != lineLength) throw new ArgumentException(@"The supplied string is improperly formatted.");
 
             int rowPos = 0;
             int colPos = 0;
