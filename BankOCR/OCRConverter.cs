@@ -13,7 +13,7 @@ namespace BankOCR
                 11, 13, 17
             };
 
-        private const int PrimeOne = 1 * 7 * 17;
+        private const int PrimeOne = 7 * 17;
         private const int PrimeTwo = 2 * 5 * 7 * 11 * 13;
         private const int PrimeThree = 2 * 5 * 7 * 13 * 17;
         private const int PrimeFour = 3 * 5 * 7 * 17;
@@ -24,6 +24,7 @@ namespace BankOCR
         private const int PrimeNine = 2 * 3 * 5 * 7 * 13 * 17;
         private const int PrimeZero = 2 * 3 * 7 * 11 * 13 * 17;
 
+        public const int BadValue = 19;
         private int[] ConvertWithPrimes(string testValue)
         {
             var charValues = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
@@ -73,11 +74,11 @@ namespace BankOCR
                 case PrimeEight: return 8;
                 case PrimeNine: return 9;
                 case PrimeZero: return 0;
-                default: return '?';
+                default: return 19;
             }
         }
 
-        private int[] ConvertPrimeValueToAccountNumber(IList<int> values)
+        private static int[] ConvertPrimeValueToAccountNumber(IList<int> values)
         {
             var result = new int[values.Count];
             for (int i = 0; i < values.Count; i++)

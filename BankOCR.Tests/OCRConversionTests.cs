@@ -182,6 +182,37 @@ namespace BankOCR.Tests
             var result = converter.Convert(testValue);
             Assert.That(result.ToValue(), Is.EqualTo(123456789));
         }
+
+        [Test]
+        public void MarksBadFive()
+        {
+            string testValue =
+                    "    _  _  _  _  _  _     _ " + Environment.NewLine +
+                    "|_||_|| || ||_   |  |  | _ " + Environment.NewLine +
+                    "  | _||_||_||_|  |  |  | _|" + Environment.NewLine +
+                    "                           " + Environment.NewLine;
+
+            var converter = new OCRConverter();
+            var result = converter.Convert(testValue);
+            Assert.That(result[0], Is.EqualTo(OCRConverter.BadValue));
+            Assert.That(result.Count(c => c == OCRConverter.BadValue), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void MarksBadFiveAndNine()
+        {
+            string testValue =
+                    "    _  _     _  _  _  _  _ " + Environment.NewLine +
+                    "  | _| _||_| _ |_   ||_||_|" + Environment.NewLine +
+                    "  ||_  _|  | _||_|  ||_| _ " + Environment.NewLine +
+                    "                           " + Environment.NewLine;
+
+            var converter = new OCRConverter();
+            var result = converter.Convert(testValue);
+            Assert.That(result[0], Is.EqualTo(OCRConverter.BadValue));
+            Assert.That(result[4], Is.EqualTo(OCRConverter.BadValue));
+            Assert.That(result.Count(c => c == OCRConverter.BadValue), Is.EqualTo(2));
+        }
     }
 
     public static class ArrayExtension
@@ -199,21 +230,6 @@ namespace BankOCR.Tests
 }
 
 /*
- _  _  _  _  _  _  _  _    
-| || || || || || || ||_   |
-|_||_||_||_||_||_||_| _|  |
-                           
-=&gt; 000000051
-    _  _  _  _  _  _     _ 
-|_||_|| || ||_   |  |  | _ 
-  | _||_||_||_|  |  |  | _|
-                           
-=&gt; 49006771? ILL
-    _  _     _  _  _  _  _ 
-  | _| _||_| _ |_   ||_||_|
-  ||_  _|  | _||_|  ||_| _ 
-                            
-=&gt; 1234?678? ILL
 
 use case 4
                            
