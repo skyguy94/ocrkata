@@ -109,6 +109,8 @@ namespace BankOCR
                 {
                     possibilites.Add(trial);
                 }
+
+                //Divide out for missing pipes?
             }
 
             return possibilites;
@@ -121,7 +123,7 @@ namespace BankOCR
 
             var result = ConvertWithPrimes(testValue);
             for (int i = 0; i < result.Length; i++)
-            {                
+            {
                 var fixes = FindPossibleBadNumberFixes(result[i]);
                 if (fixes.Count > 0)
                 {
