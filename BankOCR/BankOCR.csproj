@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountReader.cs" />
     <Compile Include="AccountValidator.cs" />
     <Compile Include="OCRConverter.cs" />
     <Compile Include="Program.cs" />

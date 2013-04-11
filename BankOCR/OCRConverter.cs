@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace BankOCR
 {
@@ -97,6 +98,27 @@ namespace BankOCR
             return finalResult;
         }
 
+        public bool IsNumberLegible(int[] number)
+        {
+            if (number.Length != 9) throw new ArgumentException("Account number has an invalid length");
+
+            var invalidCharCount = number.Count(c => c == BadValue);
+            return invalidCharCount == 0;
+        }
+
+        public string CreateStringValue(int[] number, char illegibleChar)
+        {
+            if (number.Length != 9) throw new ArgumentException("Account number has an invalid length");
+
+            var result = new StringBuilder(); 
+            for (int i = 0; i < number.Length; i++)
+            {
+                result.Append(number[i] != BadValue ? number[i] : illegibleChar);
+            }
+
+            return result.ToString();
+        }
+
         private List<int> FindPossibleBadNumberFixes(int number)
         {
             var possibilites = new List<int>();
@@ -107,7 +129,7 @@ namespace BankOCR
                 var converted = ConvertPrimeValueToDigit(trial);
                 if (converted != trial)
                 {
-                    possibilites.Add(trial);
+                    possibilites.Add(converted);
                 }
 
                 //Divide out for missing pipes?
@@ -116,22 +138,75 @@ namespace BankOCR
             return possibilites;
         }
 
-        public bool TryFindFixesForInvalidNumber(string testValue, out List<int[]> possibleValues)
+        private class IndexPair
         {
-            possibleValues = new List<int[]>();
-            var fixList = new Dictionary<int, List<int>>();
+            public int Key { get; set; }
+            public int Index { get; set; }
+        }
 
-            var result = ConvertWithPrimes(testValue);
-            for (int i = 0; i < result.Length; i++)
+        public List<int[]> TryFixIllegibleNumber(string testValue)
+        {
+            var primeResult = ConvertWithPrimes(testValue);
+            var converted = ConvertPrimeValueToAccountNumber(primeResult);
+
+            var fixes = FindPossibleFixes(primeResult, converted);
+            var possibilities = CreatePossibilities(fixes, converted);
+
+            return possibilities;
+        }
+
+        private static List<int[]> CreatePossibilities( Dictionary<int, List<int>> fixes, int[] converted)
+        {
+            var possibilities = new List<int[]>();
+            var indicies = fixes.Keys.Select(key => new IndexPair { Key = key, Index = 0 }).ToList();
+
+            //There's probably something better in Knuth #3 for this
+            while (true)
             {
-                var fixes = FindPossibleBadNumberFixes(result[i]);
-                if (fixes.Count > 0)
+                var possibility = new int[9];
+                converted.CopyTo(possibility, 0);
+                //Replace the bad digit with the lookup using the current indicies;
+                for (int badPos = 0; badPos < fixes.Keys.Count; badPos++)
                 {
-                    fixList[i] = fixes;
+                    var keyValue = indicies[badPos].Key;
+                    var indexValue = indicies[badPos].Index;
+                    var value = fixes[keyValue][indexValue];
+                    possibility[keyValue] = value;
+                }
+
+                possibilities.Add(possibility);
+
+                var indexToUpdate = indicies.Count - 1;
+                indicies[indexToUpdate].Index++;
+                if (indicies[indexToUpdate].Index == fixes[indicies[indexToUpdate].Key].Count)
+                {
+                    indicies[indexToUpdate].Index = 0;
+                    while (--indexToUpdate >= 0)
+                    {
+                        indicies[indexToUpdate].Index++;
+                        if (indicies[indexToUpdate].Index != fixes[indicies[indexToUpdate].Key].Count) break;
+                        indicies[indexToUpdate].Index = 0;
+                    }
+
+                    if (indexToUpdate < 0) break;
                 }
             }
-            
-            return fixList.Count > 0;
+
+            return possibilities;
+        }
+
+        private Dictionary<int, List<int>> FindPossibleFixes(IList<int> primeResult, IList<int> converted)
+        {
+            var fixes = new Dictionary<int, List<int>>();
+            for (int i = 0; i < primeResult.Count; i++)
+            {
+                if (converted[i] == BadValue)
+                {
+                    var matches = FindPossibleBadNumberFixes(primeResult[i]);
+                    fixes[i] = matches;
+                }
+            }
+            return fixes;
         }
     }
 }
