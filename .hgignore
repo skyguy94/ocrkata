@@ -8,3 +8,4 @@ debug/
 obj/
 *.dotsettings
 *.DotSettings
+_NCrunch_BankOCR/*
