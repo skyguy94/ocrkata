@@ -74,7 +74,7 @@ namespace BankOCR
                 case PrimeEight: return 8;
                 case PrimeNine: return 9;
                 case PrimeZero: return 0;
-                default: return 19;
+                default: return value;
             }
         }
 
@@ -83,7 +83,8 @@ namespace BankOCR
             var result = new int[values.Count];
             for (int i = 0; i < values.Count; i++)
             {
-                result[i] = ConvertPrimeValueToDigit(values[i]);
+                var converted = ConvertPrimeValueToDigit(values[i]);
+                result[i] = converted != values[i] ? converted : BadValue;
             }
 
             return result;
@@ -94,6 +95,41 @@ namespace BankOCR
             var primeResult = ConvertWithPrimes(testValue);
             var finalResult = ConvertPrimeValueToAccountNumber(primeResult);
             return finalResult;
+        }
+
+        private List<int> FindPossibleBadNumberFixes(int number)
+        {
+            var possibilites = new List<int>();
+            for (int i = 0; i < _weights.Length; i++)
+            {
+                if (_weights[i] == 1) continue;
+                var trial = number*_weights[i];
+                var converted = ConvertPrimeValueToDigit(trial);
+                if (converted != trial)
+                {
+                    possibilites.Add(trial);
+                }
+            }
+
+            return possibilites;
+        }
+
+        public bool TryFindFixesForInvalidNumber(string testValue, out List<int[]> possibleValues)
+        {
+            possibleValues = new List<int[]>();
+            var fixList = new Dictionary<int, List<int>>();
+
+            var result = ConvertWithPrimes(testValue);
+            for (int i = 0; i < result.Length; i++)
+            {                
+                var fixes = FindPossibleBadNumberFixes(result[i]);
+                if (fixes.Count > 0)
+                {
+                    fixList[i] = fixes;
+                }
+            }
+            
+            return fixList.Count > 0;
         }
     }
 }
