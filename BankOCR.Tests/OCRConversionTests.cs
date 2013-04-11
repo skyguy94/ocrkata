@@ -188,12 +188,11 @@ namespace BankOCR.Tests
     {
         public static int ToValue(this int[] array)
         {
-            var result = 0;
-            for (int i = array.Length - 1; i > 0; i--)
+            var result = array[0];
+            for (int i = 1; i <= array.Length - 1; i++)
             {
-                result += array[array.Length - i - 1]*(int)Math.Pow(10,i);
+                result += array[i]*(int)Math.Pow(10,i);
             }
-            result += array[array.Length - 1];
             return result;
         }
     }

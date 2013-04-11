@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BankOCR
 {
@@ -54,10 +56,10 @@ namespace BankOCR
                 if (rowPos == blockHeight - 1) break;
             }
 
-            return charValues;
+            return charValues.Reverse().ToArray();
         }
 
-        private int ConvertPrimeValueToDigit(int value)
+        private static int ConvertPrimeValueToDigit(int value)
         {
             switch (value)
             {
@@ -71,14 +73,14 @@ namespace BankOCR
                 case PrimeEight: return 8;
                 case PrimeNine: return 9;
                 case PrimeZero: return 0;
-                default: return value;
+                default: return '?';
             }
         }
 
-        private int[] ConvertPrimeValueToAccountNumber(int[] values)
+        private int[] ConvertPrimeValueToAccountNumber(IList<int> values)
         {
-            var result = new int[values.Length];
-            for (int i = 0; i < values.Length; i++)
+            var result = new int[values.Count];
+            for (int i = 0; i < values.Count; i++)
             {
                 result[i] = ConvertPrimeValueToDigit(values[i]);
             }
