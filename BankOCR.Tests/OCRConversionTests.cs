@@ -168,41 +168,38 @@ namespace BankOCR.Tests
             var result = converter.Convert(testValue);
             Assert.That(result.ToValue(), Is.EqualTo(999999999));
         }
+
+        [Test]
+        public void NumberOrderTest()
+        {
+            string testValue =
+                "    _  _     _  _  _  _  _ " + Environment.NewLine +
+                "  | _| _||_||_ |_   ||_||_|" + Environment.NewLine +
+                "  ||_  _|  | _||_|  ||_| _|" + Environment.NewLine +
+                "                           " + Environment.NewLine;
+
+            var converter = new OCRConverter();
+            var result = converter.Convert(testValue);
+            Assert.That(result.ToValue(), Is.EqualTo(123456789));
+        }
     }
 
     public static class ArrayExtension
     {
         public static int ToValue(this int[] array)
         {
-            var result = array[0];
-            for (int i = 1; i < array.Length; i++)
+            var result = 0;
+            for (int i = array.Length - 1; i > 0; i--)
             {
-                result += array[i]*(int)Math.Pow(10,i);
+                result += array[array.Length - i - 1]*(int)Math.Pow(10,i);
             }
+            result += array[array.Length - 1];
             return result;
         }
     }
 }
 
 /*
-se case 1
-=&gt; 000000000
-=&gt; 111111111
-=&gt; 222222222
-=&gt; 333333333
-=&gt; 444444444
-=&gt; 555555555
-=&gt; 666666666
-=&gt; 777777777
-=&gt; 888888888
-=&gt; 999999999
-    _  _     _  _  _  _  _
-  | _| _||_||_ |_   ||_||_|
-  ||_  _|  | _||_|  ||_| _| 
-                           
-=&gt; 123456789
-
-use case 3
  _  _  _  _  _  _  _  _    
 | || || || || || || ||_   |
 |_||_||_||_||_||_||_| _|  |
